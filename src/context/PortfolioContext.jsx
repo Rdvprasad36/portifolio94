@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
-// Default data representing the current state of the portfolio
+// Default data for static or fallback content
 const defaultData = {
   profile: {
     name: "Durga Venkata Prasad Rapeti",
@@ -12,26 +13,6 @@ const defaultData = {
     image: "/profile.jpg",
     summary: "AI & Data Science undergraduate (CGPA 9.38/10) with hands-on experience in machine learning, full-stack development, and AI applications. Built multiple hackathon projects including assistive technologies and productivity platforms. Experienced with Python, Next.js, and NLP-based systems, and passionate about building scalable AI solutions and real-world applications."
   },
-  recentActivities: [
-    {
-      id: 1,
-      title: 'Excited to announce my new internship!',
-      date: 'August 2025',
-      content: 'Just started my journey as an AI/ML Intern at InternPro. Looking forward to building some amazing NLP-driven chat applications! 🚀 #AI #MachineLearning #Internship'
-    },
-    {
-      id: 2,
-      title: 'Successfully concluded Yuvatarang 2K26!',
-      date: 'April 2026',
-      content: 'Had an amazing time leading the planning and execution of our flagship event at VIIT. Huge shoutout to my incredible team for managing 500+ participants! 🎯 #Leadership #VIIT'
-    },
-    {
-      id: 3,
-      title: 'Finished my latest project: StudyXpert',
-      date: 'December 2025',
-      content: 'Thrilled to share that we just launched StudyXpert, a full-stack learning assistant platform built with Next.js and Node.js. Check it out! 💻 #WebDev #Nextjs'
-    }
-  ],
   socials: [
     { name: 'LinkedIn', url: 'https://linkedin.com/in/durga-venkata-prasad-rapeti-b154022b7', icon: '🔗' },
     { name: 'GitHub', url: 'https://github.com/Rdvprasad36', icon: '💻' },
@@ -47,52 +28,6 @@ const defaultData = {
       coursework: "Data Structures and Algorithms • Operating Systems and Networks • Database Management Systems • Software Engineering • AI • Machine Learning • Data science • Computer Networks"
     }
   ],
-  experience: [
-    {
-      id: 1,
-      role: "Club Manager",
-      company: "Student Activity Council (SAC) | VIIT",
-      date: "Sep 2025 - Present",
-      points: [
-        "Lead planning and execution of student activities and flagship events such as “Yuvatarang 2K26,” managing sports and co-curricular events end-to-end, including scheduling, registrations, logistics, and on-ground coordination.",
-        "Initiated and led community-focused green initiatives by guiding student project teams to nearby villages for awareness drives and sustainability projects, mobilizing students to practice social responsibility beyond campus."
-      ],
-      tags: ["Leadership", "Event Management", "Coordination"]
-    },
-    {
-      id: 2,
-      role: "AI/ML Intern",
-      company: "InternPro",
-      date: "Jul 2025 - Aug 2025",
-      points: [
-        "Built NLP-based AI interview chatbot that simulated technical interviews and automated candidate screening.",
-        "Designed and implemented ML and NLP-driven interview simulation features, enabling intelligent question generation and response analysis for more effective candidate assessment."
-      ],
-      tags: ["AI", "Machine Learning", "NLP", "Python"]
-    },
-    {
-      id: 3,
-      role: "Web Development Intern",
-      company: "VaultofCodes (Remote)",
-      date: "Jun 2025 - Jul 2025",
-      points: [
-        "Completed a one-month web development internship with a primary focus on front-end development using HTML, CSS, and JavaScript.",
-        "Delivered 5 hands-on implementation tasks, translating design requirements into responsive and interactive user interfaces."
-      ],
-      tags: ["Web Development", "HTML/CSS", "JavaScript"]
-    },
-    {
-      id: 4,
-      role: "Machine Learning Intern",
-      company: "Google for Developers – EduSkills (Virtual)",
-      date: "Jan 2025 - Mar 2025",
-      points: [
-        "Completed a 10-week AI-ML virtual internship focused on core and applied machine learning.",
-        "Explored integrating AI with full stack development to build real-world applications."
-      ],
-      tags: ["Machine Learning", "Full Stack Integration", "AI"]
-    }
-  ],
   skillsDetailed: {
     "Programming Languages": ["Python", "C", "C++", "Java", "Javascript"],
     "Machine Learning & AI": ["Machine Learning", "Deep Learning", "Natural Language Processing (NLP)", "Data Analysis", "Model Training", "Model Deployment"],
@@ -104,51 +39,10 @@ const defaultData = {
     "Platforms & Deployment": ["Vercel", "Netlify"],
     "Currently Exploring": ["Agentic AI", "Quantum Computing"]
   },
-  projects: [
-    {
-      id: 1,
-      title: "StudyXpert",
-      description: "A full-stack learning assistant platform that helps students organize notes, track progress, and access resources from a unified dashboard. Implemented REST APIs and modular components.",
-      tech: ["TypeScript", "Next.js", "Node.js", "Vercel"],
-      link: "#"
-    },
-    {
-      id: 2,
-      title: "BusBuddy",
-      description: "A bus-tracking and information platform to help students monitor routes, timings, and availability in real time. Implemented a clean component-based front-end architecture.",
-      tech: ["TypeScript", "React", "Webapp"],
-      link: "#"
-    },
-    {
-      id: 3,
-      title: "BlindGo",
-      description: "Assistive system for the visually impaired using smart glasses with real-time audio navigation.",
-      tech: ["AI", "Hardware Integration", "Audio Navigation"],
-      link: "#"
-    },
-    {
-      id: 4,
-      title: "AAA",
-      description: "Child-friendly gamified learning and AI-powered storytelling platform.",
-      tech: ["AI", "Gamification", "Storytelling"],
-      link: "#"
-    },
-    {
-      id: 5,
-      title: "Verdex",
-      description: "A tool to understand the energy consumption and environmental impact of AI models.",
-      tech: ["Green AI", "Analytics", "Optimization"],
-      link: "#"
-    }
-  ],
-  achievements: [
-    "CodeChef Rating: 1200 | Solved 250+ programming problems",
-    "Participated in 30+ competitive programming contests",
-    "Top 3 – Quantum Valley Hackathon 2025 (Internal Round)",
-    "National Finalist – HackVyuha 2025",
-    "Top 10 – Smart Innovation Hackathon 2025, Top 4 - SusHacks’25 VIIT",
-    "Winner – Smart India Hackathon 2024 (Internal Round)"
-  ]
+  recentActivities: [],
+  experience: [],
+  projects: [],
+  achievements: []
 };
 
 const PortfolioContext = createContext();
@@ -157,35 +51,86 @@ export const usePortfolioInfo = () => useContext(PortfolioContext);
 
 export const PortfolioProvider = ({ children }) => {
   const [data, setData] = useState(() => {
-    const saved = localStorage.getItem('portfolioData_v2');
-    if (saved) {
-      try {
-        return { ...defaultData, ...JSON.parse(saved) };
-      } catch (e) {
-        console.error("Failed to parse saved data", e);
-      }
-    }
-    return defaultData;
+    const savedTheme = localStorage.getItem('portfolioTheme');
+    return { ...defaultData, theme: savedTheme || 'dark' };
   });
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState(data.theme || 'dark');
 
-  // Sync to localstorage
   useEffect(() => {
-    localStorage.setItem('portfolioData_v2', JSON.stringify({ ...data, theme }));
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [data, theme]);
+    // Check initial auth state
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAdmin(!!session);
+    });
 
-  const login = (user, pass) => {
-    if (user === 'Rdv36' && pass === 'Rdv36') {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAdmin(!!session);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
+
+  // Fetch dynamic data from Supabase
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch conditionally, fallback to default if fails (e.g. Supabase not setup yet)
+        const [projectsRes, experienceRes, activitiesRes, achievementsRes] = await Promise.all([
+          supabase.from('projects').select('*').order('id', { ascending: true }).catch(() => ({ data: null })),
+          supabase.from('experience').select('*').order('id', { ascending: true }).catch(() => ({ data: null })),
+          supabase.from('activities').select('*').order('id', { ascending: true }).catch(() => ({ data: null })),
+          supabase.from('achievements').select('*').order('id', { ascending: true }).catch(() => ({ data: null }))
+        ]);
+
+        setData(prev => ({
+          ...prev,
+          projects: projectsRes.data && projectsRes.data.length > 0 ? projectsRes.data : prev.projects,
+          experience: experienceRes.data && experienceRes.data.length > 0 ? experienceRes.data : prev.experience,
+          recentActivities: activitiesRes.data && activitiesRes.data.length > 0 ? activitiesRes.data : prev.recentActivities,
+          achievements: achievementsRes.data && achievementsRes.data.length > 0 ? achievementsRes.data.map(a => a.content) : prev.achievements
+        }));
+      } catch (e) {
+        console.error("Error fetching from Supabase, operating with fallback data.", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('portfolioTheme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const login = async (email, password) => {
+    // Basic fallback if empty credentials provided for local testing (remove in prod)
+    if (email === 'Rdv36' && password === 'Rdv36') {
       setIsAdmin(true);
       return true;
     }
-    return false;
+    
+    // Proper Supabase Auth
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Login error:', error.message);
+      return false;
+    }
+    
+    setIsAdmin(true);
+    return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAdmin(false);
   };
 
@@ -195,68 +140,135 @@ export const PortfolioProvider = ({ children }) => {
 
   const updateProfile = (key, value) => {
     setData(prev => ({ ...prev, profile: { ...prev.profile, [key]: value } }));
+    // Future enhancement: Save profile to Supabase as well
   };
 
   const updateSection = (section, newValue) => {
     setData(prev => ({ ...prev, [section]: newValue }));
   };
 
-  // Insertion Logic
-  const insertItem = (arrayName, item, index = -1) => {
+  // --- Remote CRUD Operations ---
+
+  const addProject = async (project, index = -1) => {
+    // Optimistic update
+    const newItem = { ...project, id: Date.now() }; // Temp ID
     setData(prev => {
-      const newArray = [...(prev[arrayName] || [])];
-      const newItem = { ...item, id: item.id || Date.now() };
-      
-      if (index === -1 || index >= newArray.length) {
-        newArray.push(newItem);
-      } else if (index === 0) {
-        newArray.unshift(newItem);
-      } else {
-        newArray.splice(index, 0, newItem);
-      }
-      return { ...prev, [arrayName]: newArray };
+      const arr = [...prev.projects];
+      if (index === -1) arr.push(newItem);
+      else arr.splice(index, 0, newItem);
+      return { ...prev, projects: arr };
     });
+
+    // Supabase insert
+    const { data: inserted, error } = await supabase.from('projects').insert([{
+      title: project.title,
+      description: project.description,
+      tech: project.tech,
+      link: project.link
+    }]).select().single();
+    
+    if (!error && inserted) {
+      setData(prev => ({
+        ...prev,
+        projects: prev.projects.map(p => p.id === newItem.id ? inserted : p)
+      }));
+    }
   };
 
-  const deleteItem = (arrayName, id) => {
-    setData(prev => ({
-      ...prev,
-      [arrayName]: (prev[arrayName] || []).filter(item => item.id !== id)
-    }));
+  const deleteProject = async (id) => {
+    setData(prev => ({ ...prev, projects: prev.projects.filter(p => p.id !== id) }));
+    await supabase.from('projects').delete().eq('id', id);
   };
 
-  const addProject = (project, index = -1) => insertItem('projects', project, index);
-  const deleteProject = (id) => deleteItem('projects', id);
-
-  const addExperience = (experience, index = -1) => insertItem('experience', experience, index);
-  const deleteExperience = (id) => deleteItem('experience', id);
-
-  const addAchievement = (text, index = -1) => {
+  const addExperience = async (exp, index = -1) => {
+    const newItem = { ...exp, id: Date.now() };
     setData(prev => {
-      const newArr = [...prev.achievements];
-      if (index === -1 || index >= newArr.length) newArr.push(text);
-      else if (index === 0) newArr.unshift(text);
-      else newArr.splice(index, 0, text);
-      return { ...prev, achievements: newArr };
+      const arr = [...prev.experience];
+      if (index === -1) arr.push(newItem);
+      else arr.splice(index, 0, newItem);
+      return { ...prev, experience: arr };
     });
+
+    const { data: inserted, error } = await supabase.from('experience').insert([{
+      role: exp.role,
+      company: exp.company,
+      date: exp.date,
+      points: exp.points,
+      tags: exp.tags
+    }]).select().single();
+
+    if (!error && inserted) {
+      setData(prev => ({
+        ...prev,
+        experience: prev.experience.map(e => e.id === newItem.id ? inserted : e)
+      }));
+    }
   };
 
-  const deleteAchievement = (index) => {
+  const deleteExperience = async (id) => {
+    setData(prev => ({ ...prev, experience: prev.experience.filter(e => e.id !== id) }));
+    await supabase.from('experience').delete().eq('id', id);
+  };
+
+  const addAchievement = async (text, index = -1) => {
+    setData(prev => {
+      const arr = [...prev.achievements];
+      if (index === -1) arr.push(text);
+      else arr.splice(index, 0, text);
+      return { ...prev, achievements: arr };
+    });
+
+    await supabase.from('achievements').insert([{ content: text }]);
+  };
+
+  const deleteAchievement = async (index) => {
+    const achievementToDelete = data.achievements[index];
     setData(prev => ({ ...prev, achievements: prev.achievements.filter((_, i) => i !== index) }));
+    
+    // We try to match by content since array doesn't have IDs local side for achievements yet
+    if (achievementToDelete) {
+        await supabase.from('achievements').delete().eq('content', achievementToDelete);
+    }
   };
 
-  const addActivity = (activity) => insertItem('recentActivities', activity);
-  const updateActivity = (id, updatedFields) => {
+  const addActivity = async (activity) => {
+    const newItem = { ...activity, id: Date.now() };
+    setData(prev => ({ ...prev, recentActivities: [newItem, ...prev.recentActivities] }));
+
+    const { data: inserted, error } = await supabase.from('activities').insert([{
+      title: activity.title,
+      date: activity.date,
+      content: activity.content
+    }]).select().single();
+
+    if (!error && inserted) {
+      setData(prev => ({
+        ...prev,
+        recentActivities: prev.recentActivities.map(a => a.id === newItem.id ? inserted : a)
+      }));
+    }
+  };
+
+  const updateActivity = async (id, updatedFields) => {
     setData(prev => ({
       ...prev,
       recentActivities: prev.recentActivities.map(a => a.id === id ? { ...a, ...updatedFields } : a)
     }));
+
+    await supabase.from('activities').update(updatedFields).eq('id', id);
   };
-  const deleteActivity = (id) => deleteItem('recentActivities', id);
+
+  const deleteActivity = async (id) => {
+    setData(prev => ({
+      ...prev,
+      recentActivities: prev.recentActivities.filter(a => a.id !== id)
+    }));
+    await supabase.from('activities').delete().eq('id', id);
+  };
 
   return (
     <PortfolioContext.Provider value={{ 
-      data, isAdmin, login, logout, updateProfile, updateSection, 
+      data, isAdmin, isLoading, login, logout, updateProfile, updateSection, 
       theme, toggleTheme, 
       addProject, deleteProject, 
       addExperience, deleteExperience,

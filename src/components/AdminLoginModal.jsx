@@ -6,13 +6,20 @@ export default function AdminLoginModal({ isOpen, onClose }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { login } = usePortfolioInfo();
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (login(username, password)) {
+    setIsAuthenticating(true);
+    setError('');
+    
+    // In Supabase, the email is needed. For the fallback, Rdv36 works.
+    const success = await login(username, password);
+    
+    if (success) {
       onClose();
       setUsername('');
       setPassword('');
@@ -20,6 +27,7 @@ export default function AdminLoginModal({ isOpen, onClose }) {
     } else {
       setError('INVALID CREDENTIALS. ACCESS DENIED.');
     }
+    setIsAuthenticating(false);
   };
 
   return (
@@ -78,21 +86,23 @@ export default function AdminLoginModal({ isOpen, onClose }) {
             {error && <div className="pixel-text blink" style={{ color: '#FF0000', fontSize: '10px', textAlign: 'center' }}>{error}</div>}
 
             <motion.button
-              whileHover={{ scale: 1.05, background: '#00CFCF', color: '#000' }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: isAuthenticating ? 1 : 1.05, background: isAuthenticating ? 'transparent' : '#00CFCF', color: isAuthenticating ? '#00CFCF' : '#000' }}
+              whileTap={{ scale: isAuthenticating ? 1 : 0.95 }}
               type="submit"
+              disabled={isAuthenticating}
               className="pixel-heading"
               style={{
                 background: 'transparent',
                 border: '2px solid #00CFCF',
                 padding: '12px',
                 color: '#00CFCF',
-                cursor: 'pointer',
+                cursor: isAuthenticating ? 'not-allowed' : 'pointer',
                 borderRadius: '6px',
-                marginTop: '10px'
+                marginTop: '10px',
+                opacity: isAuthenticating ? 0.5 : 1
               }}
             >
-              AUTHENTICATE
+              {isAuthenticating ? 'AUTHENTICATING...' : 'AUTHENTICATE'}
             </motion.button>
           </form>
         </motion.div>
