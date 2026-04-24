@@ -161,8 +161,8 @@ export default function Contact() {
           />
           <ContactCard
             label="IDENTITY"
-            value="Rdv Prasad"
-            href="https://linkedin.com/in/rdv-prasad"
+value="Durga Venkata Prasad Rapeti"
+href="https://www.linkedin.com/in/durga-venkata-prasad-rapeti"
             icon={<span style={{ fontSize: '24px' }}>🔗</span>}
           />
         </div>

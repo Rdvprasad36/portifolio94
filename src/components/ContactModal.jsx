@@ -114,7 +114,7 @@ export default function ContactModal({ onClose }) {
 
               <div className="au-panel-light" style={{ padding: '16px', border: '1px solid #00CFCF33' }}>
                 <div className="pixel-text" style={{ color: '#6B31BC', fontSize: '8px', marginBottom: '8px' }}>[IDENTITY]</div>
-                <div className="mono-text" style={{ color: '#FFF', fontSize: '14px' }}>rdv-prasad (LinkedIn)</div>
+Durga Venkata Prasad Rapeti (LinkedIn)
               </div>
             </div>
 
